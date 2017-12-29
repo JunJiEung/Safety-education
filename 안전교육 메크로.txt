@@ -1,0 +1,31 @@
+prog_no <input type="text" id="prog_no">
+page_number <input type="text" id="page_number">
+<input type="button" onclick="function macro(){
+        var prog_no = document.getElementById('prog_no').value; var page_number = document.getElementById('page_number').value;
+    $.ajax({
+        type: 'POST',
+        async: false,
+        url: '/Edu/ContentsViewNextProcess',
+        data: { 'scheduleMemberProgressNo': prog_no, 'gapTime': 1000000, 'currentPage': page_number },
+        success: function (data) {
+            if (data.Success == true) {
+                opener.document.location.reload();
+                    if (data.IsLastPage == true) {
+                        alert('수고 하셨습니다. 해당 교육이 완료 되었습니다.');
+                    }
+                    else{
+                        document.getElementById('page_number').value = '' + (Number(page_number)+1);
+                        macro();
+                    }
+            }
+            else {
+                setTimeout(function() {macro()}, 10000);
+                console.log(data.Message + ' 페이지 : ' + page_number + ' 10초후 다시 자동 시작');
+//                alert(data.Message + ' 페이지 : ' + page_number + ' 10초후 다시 자동 시작');
+            }
+        },
+        error: function (xhr, status, error) {
+            alert('err : ' + error);
+        }
+    });
+} macro();" value="전송">
